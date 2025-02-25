@@ -1,10 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MyFirstMVCApp.Data;
 using MyFirstMVCApp.Models;
 
 namespace MyFirstMVCApp.Controllers
 {
     public class WindowsController : Controller
     {
+        private readonly ApplicationDbContext _context;
+
+        public WindowsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         // Show the form
         [HttpGet]
         public IActionResult Create()
@@ -18,8 +26,10 @@ namespace MyFirstMVCApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Here you would typically save the data to the database
-                // For now, we can just return a success view or message
+                // Add the Window object to the database
+                _context.Windows.Add(window);
+                _context.SaveChanges(); // Save the changes to the database
+
                 return RedirectToAction("Success");
             }
 
@@ -30,6 +40,13 @@ namespace MyFirstMVCApp.Controllers
         public IActionResult Success()
         {
             return View();
+        }
+
+        // New action to display the list of windows
+        public IActionResult Index()
+        {
+            var windowsList = _context.Windows.ToList();
+            return View(windowsList);
         }
     }
 }
