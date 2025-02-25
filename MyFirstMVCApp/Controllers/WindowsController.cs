@@ -6,6 +6,7 @@ using OfficeOpenXml;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using X.PagedList.Extensions;
 
 namespace MyFirstMVCApp.Controllers
 {
@@ -156,9 +157,14 @@ namespace MyFirstMVCApp.Controllers
         }
 
         // New action to display the list of windows
-        public IActionResult Index()
+        public IActionResult Index(int? page, int pageSize = 5)
         {
-            var windowsList = _context.Windows.ToList();
+            int pageNumber = (page ?? 1); // Default to page 1 if null
+            pageSize = pageSize > 0 ? pageSize : 5; // Ensure positive value
+
+            var windowsList = _context.Windows.OrderBy(w => w.Id).ToPagedList(pageNumber, pageSize);
+
+            ViewBag.PageSize = pageSize;
             return View(windowsList);
         }
     }
