@@ -4,6 +4,11 @@ using System.Diagnostics;
 
 public class HomeController : Controller
 {
+    public IActionResult About()
+    {
+        return View();
+    }
+
     private readonly ILogger<HomeController> _logger;
 
     public HomeController(ILogger<HomeController> logger)
