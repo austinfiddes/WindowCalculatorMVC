@@ -6,6 +6,58 @@ namespace MyFirstMVCApp.Controllers
 {
     public class WindowsController : Controller
     {
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            var window = _context.Windows.Find(id);
+            if (window == null)
+            {
+                return NotFound();
+            }
+            return View(window);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var window = _context.Windows.Find(id);
+            if (window != null)
+            {
+                _context.Windows.Remove(window);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var window = _context.Windows.Find(id);
+            if (window == null)
+            {
+                return NotFound();
+            }
+            return View(window);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, Window updatedWindow)
+        {
+            if (id != updatedWindow.Id)
+            {
+                return BadRequest();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.Windows.Update(updatedWindow);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(updatedWindow);
+        }
+
         private readonly ApplicationDbContext _context;
 
         public WindowsController(ApplicationDbContext context)

@@ -12,6 +12,7 @@
             <th>Name</th>
             <th>Width</th>
             <th>Height</th>
+            <th>Actions</th> <!-- New column for the menu -->
         </tr>
     </thead>
     <tbody>
@@ -22,6 +23,18 @@
                 <td>@window.Name</td>
                 <td>@window.Width</td>
                 <td>@window.Height</td>
+                <td>
+                    <!-- Bootstrap Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            &#9776; <!-- Hamburger Icon -->
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@window.Id">Edit</a></li>
+                            <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@window.Id">Delete</a></li>
+                        </ul>
+                    </div>
+                </td>
             </tr>
         }
     </tbody>
