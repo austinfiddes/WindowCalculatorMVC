@@ -19,5 +19,5 @@ This is an ASP.NET Core MVC web application that allows users to calculate windo
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/WindowCalculatorMVC.git
+git clone https://github.com/austinfiddes/WindowCalculatorMVC.git
 cd WindowCalculatorMVC
