@@ -4,7 +4,29 @@
     ViewData["Title"] = "Windows List";
 }
 
-<h2>Windows List</h2>
+<h1>Windows List</h1>
+<br />
+<h3>Upload Windows Data</h3>
+
+<form asp-action="UploadExcel" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="file">Choose Excel File:</label>
+        <input type="file" name="file" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Upload</button>
+</form>
+<br />
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+<br />
+
 <table class="table">
     <thead>
         <tr>
