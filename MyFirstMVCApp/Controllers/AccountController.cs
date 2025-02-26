@@ -8,10 +8,10 @@ namespace MyFirstMVCApp.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -20,11 +20,6 @@ namespace MyFirstMVCApp.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                return RedirectToAction("Index", "Home"); // Redirect logged-in users
-            }
-
             return View();
         }
 
@@ -54,7 +49,7 @@ namespace MyFirstMVCApp.Controllers
 
                     await _signInManager.SignInAsync(user, authProperties);
 
-                    // ✅ Debug: Log authentication properties
+                    // Debug: Log authentication properties
                     Console.WriteLine($"Auth Properties: IsPersistent = {authProperties.IsPersistent}, ExpiresUtc = {authProperties.ExpiresUtc}");
 
                     return RedirectToAction("Index", "Home");
@@ -78,46 +73,23 @@ namespace MyFirstMVCApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                Console.WriteLine("Register attempt with email: " + model.Email);
-
-                if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
-                {
-                    ModelState.AddModelError("", "Email and Password are required.");
-                    return View(model);
-                }
-
-                var existingUser = await _userManager.FindByEmailAsync(model.Email);
-                if (existingUser != null)
-                {
-                    ModelState.AddModelError("", "An account with this email already exists.");
-                    return View(model);
-                }
-
-                var user = new IdentityUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    Console.WriteLine($"✅ User {user.Email} created successfully!");
-
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    Console.WriteLine($"❌ Registration failed for {user.Email}");
-                    foreach (var error in result.Errors)
-                    {
-                        Console.WriteLine($"Error: {error.Description}");
-                        ModelState.AddModelError("", error.Description);
-                    }
-                }
+                return View(model);
             }
-            else
+
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
             {
-                Console.WriteLine("❌ ModelState is invalid.");
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return RedirectToAction("Index", "Home");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
             }
 
             return View(model);
@@ -133,5 +105,11 @@ namespace MyFirstMVCApp.Controllers
 
             return RedirectToAction("Login", "Account");
         }
+
+        public IActionResult EditProfile()
+        {
+            return View();
+        }
+
     }
 }
